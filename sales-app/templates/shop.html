@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Boutique — DistriStock Pro{% endblock %}
+{% block content %}
+<section class="mb-8">
+  <h1 class="text-3xl font-bold text-slate-900 mb-2">Catalogue</h1>
+  <p class="text-slate-600 max-w-2xl">
+    Interface « Modern & Clean » (Tailwind). Les prix et stocks proviennent de la base
+    partagée ; la décrémentation au moment de l’achat passe par le microservice inventaire.
+  </p>
+</section>
+
+<div class="grid sm:grid-cols-2 lg:grid-cols-2 gap-6">
+  {% for p in products %}
+  <article class="bg-white rounded-2xl border border-slate-200 overflow-hidden card-hover flex flex-col">
+    <div class="aspect-video bg-slate-100 overflow-hidden">
+      {% if p.image_url %}
+      <img src="{{ p.image_url }}" alt="{{ p.name }}" class="w-full h-full object-cover" loading="lazy">
+      {% else %}
+      <div class="w-full h-full flex items-center justify-center text-slate-400 text-sm">Pas d’image</div>
+      {% endif %}
+    </div>
+    <div class="p-5 flex flex-col flex-1">
+      <p class="text-xs uppercase tracking-wide text-indigo-600 font-semibold mb-1">{{ p.category or '—' }}</p>
+      <h2 class="text-lg font-semibold text-slate-900 mb-2">{{ p.name }}</h2>
+      <p class="text-sm text-slate-600 mb-4 flex-1">{{ p.description[:160] }}{% if p.description|length > 160 %}…{% endif %}</p>
+      <div class="flex items-end justify-between gap-3">
+        <div>
+          <p class="text-2xl font-bold text-slate-900">{{ '%.2f'|format(p.sale_price) }} €</p>
+          <p class="text-xs {% if p.quantity_stock <= p.low_stock_threshold %}text-amber-700 font-semibold{% else %}text-slate-500{% endif %}">
+            Stock : {{ p.quantity_stock }}
+            {% if p.quantity_stock <= p.low_stock_threshold %} · Stock bas{% endif %}
+          </p>
+        </div>
+        {% if p.quantity_stock > 0 %}
+        <form method="post" action="{{ url_for('cart_add') }}" class="flex items-center gap-2">
+          <input type="hidden" name="sku" value="{{ p.sku }}">
+          <input type="number" name="quantity" value="1" min="1" max="{{ p.quantity_stock }}"
+                 class="w-16 rounded border border-slate-300 px-2 py-1 text-sm text-center">
+          <button type="submit"
+                  class="rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-semibold hover:bg-indigo-700 transition-colors">
+            Ajouter
+          </button>
+        </form>
+        {% else %}
+        <span class="text-sm font-medium text-red-600">Rupture</span>
+        {% endif %}
+      </div>
+    </div>
+  </article>
+  {% else %}
+  <p class="text-slate-500 col-span-full">Aucun produit disponible.</p>
+  {% endfor %}
+</div>
+{% endblock %}

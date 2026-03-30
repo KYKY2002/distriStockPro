@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Commande confirmée — DistriStock Pro{% endblock %}
+{% block content %}
+<!-- Barre de progression : étape 3 terminée -->
+<ol class="flex flex-wrap items-center gap-2 mb-8 text-sm">
+  <li class="flex items-center gap-2 text-slate-500">
+    <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">✓</span>
+    <span>Panier</span>
+  </li>
+  <li class="text-slate-300">→</li>
+  <li class="flex items-center gap-2 text-slate-500">
+    <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">✓</span>
+    <span>Paiement</span>
+  </li>
+  <li class="text-slate-300">→</li>
+  <li class="flex items-center gap-2">
+    <span class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">✓</span>
+    <span class="font-medium text-slate-900">Confirmation</span>
+  </li>
+</ol>
+
+<div class="bg-white rounded-xl border border-slate-200 p-8 max-w-xl mx-auto text-center">
+  <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-100 flex items-center justify-center text-3xl">✓</div>
+  <h1 class="text-2xl font-bold text-slate-900 mb-2">Merci pour votre commande</h1>
+  <p class="text-slate-600 mb-6">Référence : <span class="font-mono font-semibold text-indigo-700">{{ order.order_reference }}</span></p>
+  <dl class="text-left text-sm space-y-2 bg-slate-50 rounded-lg p-4 mb-6">
+    <div class="flex justify-between"><dt class="text-slate-500">Client</dt><dd class="font-medium">{{ order.customer_name }}</dd></div>
+    <div class="flex justify-between"><dt class="text-slate-500">E-mail</dt><dd><a href="mailto:{{ order.email }}" class="text-indigo-600">{{ order.email }}</a></dd></div>
+    <div class="flex justify-between"><dt class="text-slate-500">Total</dt><dd class="font-bold">{{ '%.2f'|format(order.total_amount) }} €</dd></div>
+    <div class="flex justify-between"><dt class="text-slate-500">Paiement</dt><dd>{{ order.payment_method }}</dd></div>
+    <div class="flex justify-between"><dt class="text-slate-500">Statut</dt><dd class="capitalize">{{ order.order_status }}</dd></div>
+  </dl>
+  <a href="{{ url_for('shop') }}" class="inline-block rounded-lg bg-indigo-600 text-white px-6 py-3 font-semibold hover:bg-indigo-700 transition-colors">
+    Retour à la boutique
+  </a>
+</div>
+{% endblock %}

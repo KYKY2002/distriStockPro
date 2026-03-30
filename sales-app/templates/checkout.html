@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Paiement — DistriStock Pro{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-2">Finaliser la commande</h1>
+<p class="text-slate-600 mb-6">Les moyens de paiement listés correspondent au cahier des charges (Orange Money, Wave, etc.).</p>
+
+<!-- Barre de progression : étape 2 sur 3 -->
+<ol class="flex flex-wrap items-center gap-2 mb-8 text-sm">
+  <li class="flex items-center gap-2 text-slate-500">
+    <span class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">✓</span>
+    <span>Panier</span>
+  </li>
+  <li class="text-slate-300">→</li>
+  <li class="flex items-center gap-2">
+    <span class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">2</span>
+    <span class="font-medium text-slate-900">Paiement</span>
+  </li>
+  <li class="text-slate-300">→</li>
+  <li class="flex items-center gap-2 text-slate-500">
+    <span class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center">3</span>
+    <span>Confirmation</span>
+  </li>
+</ol>
+
+<div class="grid lg:grid-cols-2 gap-8">
+  <div class="bg-white rounded-xl border border-slate-200 p-6">
+    <h2 class="font-semibold text-slate-900 mb-4">Récapitulatif</h2>
+    <ul class="space-y-2 text-sm">
+      {% for line in lines %}
+      <li class="flex justify-between">
+        <span>{{ line.name }} × {{ line.quantity }}</span>
+        <span class="font-medium">{{ '%.2f'|format(line.line_total) }} €</span>
+      </li>
+      {% endfor %}
+    </ul>
+    <hr class="my-4 border-slate-200">
+    <p class="flex justify-between text-lg font-bold">
+      <span>Total</span>
+      <span>{{ '%.2f'|format(total) }} €</span>
+    </p>
+  </div>
+
+  <form method="post" action="{{ url_for('checkout') }}" class="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
+    <h2 class="font-semibold text-slate-900 mb-2">Informations client</h2>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1" for="customer_name">Nom complet</label>
+      <input id="customer_name" name="customer_name" required
+             class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-1" for="email">E-mail</label>
+      <input id="email" name="email" type="email" required
+             class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-slate-700 mb-2">Moyen de paiement</label>
+      <div class="space-y-2">
+        {% for key in payment_keys %}
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="radio" name="payment_method" value="{{ key }}" required class="text-indigo-600">
+          <span>{{ payment_labels[key] }}</span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+    <button type="submit"
+            class="w-full rounded-lg bg-indigo-600 text-white py-3 font-semibold hover:bg-indigo-700 transition-colors">
+      Valider et payer
+    </button>
+  </form>
+</div>
+{% endblock %}

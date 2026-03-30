@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}DistriStock Pro{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Légère élévation au survol pour les cartes produits */
+    .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -8px rgb(15 23 42 / 0.2); }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+  <header class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
+      <a href="{{ url_for('shop') }}" class="text-xl font-bold text-slate-900 tracking-tight">DistriStock Pro</a>
+      <nav class="flex items-center gap-4 text-sm font-medium">
+        <a href="{{ url_for('shop') }}" class="text-slate-600 hover:text-indigo-600">Boutique</a>
+        <a href="{{ url_for('cart_page') }}" class="text-slate-600 hover:text-indigo-600">Panier</a>
+        <span class="text-xs text-slate-400 hidden sm:inline">sales-app · port 5000</span>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Conteneur de notifications type « toast » (rempli par le script ci-dessous) -->
+  <div id="toast-root" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    /**
+     * Affiche les messages Flask flash() sous forme de toasts non bloquants.
+     * Catégories : success (vert), error (rouge), autres (gris).
+     */
+    function showToast(message, category) {
+      const root = document.getElementById('toast-root');
+      const el = document.createElement('div');
+      const base = 'pointer-events-auto rounded-lg px-4 py-3 text-sm font-medium shadow-lg border ';
+      const styles = {
+        success: 'bg-emerald-50 text-emerald-900 border-emerald-200',
+        error: 'bg-red-50 text-red-900 border-red-200',
+      };
+      el.className = base + (styles[category] || 'bg-white text-slate-800 border-slate-200');
+      el.textContent = message;
+      root.appendChild(el);
+      setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.4s'; }, 4200);
+      setTimeout(() => el.remove(), 4800);
+    }
+    {% set flashes = get_flashed_messages(with_categories=true) %}
+    const _flashes = {{ flashes | tojson }};
+    if (typeof _flashes !== 'undefined') {
+      _flashes.forEach(function (pair) {
+        showToast(pair[1], pair[0]);
+      });
+    }
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
